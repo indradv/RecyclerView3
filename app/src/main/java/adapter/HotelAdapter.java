@@ -1,9 +1,13 @@
 package adapter;
 
+import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,9 +23,11 @@ import model.Hotel;
 public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.ViewHolder> {
 
     ArrayList<Hotel> hotelList;
+    IHotelAdapter mIHotelAdapter;
 
-    public HotelAdapter(ArrayList<Hotel> hotelList) {
+    public HotelAdapter(Context contex, ArrayList<Hotel> hotelList) {
         this.hotelList = hotelList;
+        mIHotelAdapter = (IHotelAdapter) contex;
     }
 
     @Override
@@ -36,7 +42,7 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.ViewHolder> 
         Hotel hotel = hotelList.get(position);
         holder.tvJudul.setText(hotel.judul);
         holder.tvDeskripsi.setText(hotel.deskripsi);
-        holder.ivFoto.setImageDrawable(hotel.foto);
+        holder.ivFoto.setImageURI(Uri.parse(hotel.foto));
 
     }
 
@@ -47,17 +53,73 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.ViewHolder> 
         return 0;
     }
 
+    public interface IHotelAdapter {
+        void doClick(int pos);
+
+        void doEdit(int pos);
+
+        void doDelete(int pos);
+
+        void doFav(int pos);
+
+        void doShare(int pos);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView ivFoto;
         TextView tvJudul;
         TextView tvDeskripsi;
+        Button bEdit;
+        Button bDelete;
+        ImageButton ibFav;
+        ImageButton ibShare;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ivFoto = (ImageView) itemView.findViewById(R.id.imageView);
             tvJudul = (TextView) itemView.findViewById(R.id.textViewJudul);
             tvDeskripsi = (TextView) itemView.findViewById(R.id.textViewDeskripsi);
+            bEdit = (Button) itemView.findViewById(R.id.buttonEdit);
+            bDelete = (Button) itemView.findViewById(R.id.buttonDelete);
+            ibFav = (ImageButton) itemView.findViewById(R.id.imageButtonFavorite);
+            ibShare = (ImageButton) itemView.findViewById(R.id.buttonShare);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mIHotelAdapter.doClick(getAdapterPosition());
+                }
+            });
+
+            bEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mIHotelAdapter.doEdit(getAdapterPosition());
+                }
+            });
+            bDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mIHotelAdapter.doDelete(getAdapterPosition());
+                }
+            });
+            ibFav.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mIHotelAdapter.doFav(getAdapterPosition());
+                }
+            });
+            ibShare.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mIHotelAdapter.doShare(getAdapterPosition());
+                }
+            });
+
         }
+
+
     }
+
 }
